@@ -1,14 +1,5 @@
 #include "cian_plugin.h"
-
-static int find_selector(uint32_t selector, const uint32_t *selectors, size_t n, selector_t *out) {
-    for (selector_t i = 0; i < n; i++) {
-        if (selector == selectors[i]) {
-            *out = i;
-            return 0;
-        }
-    }
-    return -1;
-}
+#include "plugin_utils.h"
 
 // Called once to init.
 void handle_init_contract(void *parameters) {
@@ -36,7 +27,7 @@ void handle_init_contract(void *parameters) {
     memset(context, 0, sizeof(*context));
 
     uint32_t selector = U4BE(msg->selector, 0);
-    if (find_selector(selector, CIAN_SELECTORS, NUM_SELECTORS, &context->selectorIndex)) {
+    if (!find_selector(selector, CIAN_SELECTORS, NUM_SELECTORS, &context->selectorIndex)) {
         msg->result = ETH_PLUGIN_RESULT_UNAVAILABLE;
         return;
     }
