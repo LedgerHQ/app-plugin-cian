@@ -17,6 +17,9 @@
 
 APPNAME = "CIAN"
 
+# Hardcode uppercase variant
+NORMAL_NAME = "CIAN"
+
 # Application version
 APPVERSION_M = 1
 APPVERSION_N = 0
