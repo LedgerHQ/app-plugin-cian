@@ -1,7 +1,7 @@
 #include "cian_plugin.h"
 
 // Sets the first screen to display.
-void handle_query_contract_id(void *parameters) {
+void handle_query_contract_id(ethQueryContractID_t *msg) {
     /*
         Because we need to use the pointer value of the Ethereum address in memory,
         we can't define it like this:
@@ -38,7 +38,6 @@ void handle_query_contract_id(void *parameters) {
     selectors[11] = (cian_ui_info_t){VAULT_WRAPPER_DEPOSIT_WSTETH, NULL, "WSTETH Deposit"};
     selectors[12] = (cian_ui_info_t){VAULT_WRAPPER_WITHDRAW_WSTETH, NULL, "WSTETH Withdraw"};
 
-    ethQueryContractID_t *msg = (ethQueryContractID_t *) parameters;
     const context_t *context = (const context_t *) msg->pluginContext;
     strlcpy(msg->name, PLUGIN_NAME, msg->nameLength);
     PRINTF("selectors length = %d\n", sizeof(selectors) / sizeof(cian_ui_info_t));
@@ -50,7 +49,7 @@ void handle_query_contract_id(void *parameters) {
                 msg->result = ETH_PLUGIN_RESULT_OK;
                 return;
             } else if (memcmp(selectors[i].contract_address,
-                              msg->pluginSharedRO->txContent->destination,
+                              msg->txContent->destination,
                               ADDRESS_LENGTH) == 0) {
                 strlcpy(msg->version, selectors[i].ticker, msg->versionLength);
                 msg->result = ETH_PLUGIN_RESULT_OK;
