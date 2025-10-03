@@ -14,7 +14,7 @@ static void set_send_ui(ethQueryContractUI_t *msg, const context_t *context) {
     infos[2] = (cian_ui_info_t){UNUSED, (uint8_t *) ARBITRUM_WSTETH_VAULT_ADDR, "WSTETH"};
     infos[3] = (cian_ui_info_t){UNUSED, (uint8_t *) OPTIMISM_WSTETH_VAULT_ADDR, "WSTETH"};
     for (size_t i = 0; i < sizeof(infos) / sizeof(infos[0]); i++) {
-        if (memcmp((uint8_t *) msg->pluginSharedRO->txContent->destination,
+        if (memcmp((uint8_t *) msg->txContent->destination,
                    infos[i].contract_address,
                    ADDRESS_LENGTH) == 0) {
             amountToString(context->amount_in_out,
@@ -35,8 +35,8 @@ static void set_wrapper_send_ui1(ethQueryContractUI_t *msg, const context_t *con
         return;
     }
     strlcpy(msg->title, "Send(1/2)", msg->titleLength);
-    amountToString(msg->pluginSharedRO->txContent->value.value,
-                   msg->pluginSharedRO->txContent->value.length,
+    amountToString(msg->txContent->value.value,
+                   msg->txContent->value.length,
                    WEI_TO_ETHER,
                    "ETH",
                    msg->msg,
@@ -75,7 +75,7 @@ static void set_wrapper_deposit_wapto_ui(ethQueryContractUI_t *msg, const contex
         (cian_ui_info_t){UNUSED, (uint8_t *) OPTIMISM_WSTETH_VAULT_WRAPPER_ADDR, "WSTETH(min)"};
 
     for (size_t i = 0; i < sizeof(infos) / sizeof(cian_ui_info_t); i++) {
-        if (memcmp((uint8_t *) msg->pluginSharedRO->txContent->destination,
+        if (memcmp((uint8_t *) msg->txContent->destination,
                    infos[i].contract_address,
                    ADDRESS_LENGTH) == 0) {
             amountToString(context->amount_received,
@@ -120,8 +120,8 @@ static void set_wrapper_send_wsteth_ui(ethQueryContractUI_t *msg, const context_
         return;
     }
     strlcpy(msg->title, "Send", msg->titleLength);
-    amountToString(msg->pluginSharedRO->txContent->value.value,
-                   msg->pluginSharedRO->txContent->value.length,
+    amountToString(msg->txContent->value.value,
+                   msg->txContent->value.length,
                    WEI_TO_ETHER,
                    "WSTETH",
                    msg->msg,
@@ -148,7 +148,7 @@ static void set_withdraw_ui(ethQueryContractUI_t *msg, const context_t *context)
         case VAULT_WRAPPER_WITHDRAW_WSTETH:
             strlcpy(msg->title, "Withdraw", msg->titleLength);
             for (size_t i = 0; i < sizeof(infos) / sizeof(cian_ui_info_t); i++) {
-                if (memcmp((uint8_t *) msg->pluginSharedRO->txContent->destination,
+                if (memcmp((uint8_t *) msg->txContent->destination,
                            infos[i].contract_address,
                            ADDRESS_LENGTH) == 0) {
                     amountToString(context->amount_in_out,
@@ -262,8 +262,7 @@ static screens_t get_screen(ethQueryContractUI_t *msg, context_t *context) {
     return ERROR;
 }
 
-void handle_query_contract_ui(void *parameters) {
-    ethQueryContractUI_t *msg = (ethQueryContractUI_t *) parameters;
+void handle_query_contract_ui(ethQueryContractUI_t *msg) {
     context_t *context = (context_t *) msg->pluginContext;
 
     // msg->title is the upper line displayed on the device.
